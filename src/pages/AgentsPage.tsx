@@ -71,11 +71,13 @@ const AgentsPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500">Active</Badge>;
+        return <Badge className="bg-green-500">Ativo</Badge>;
       case 'inactive':
-        return <Badge variant="outline">Inactive</Badge>;
+        return <Badge variant="outline">Inativo</Badge>;
       case 'training':
-        return <Badge className="bg-yellow-500">Training</Badge>;
+        return <Badge className="bg-yellow-500">Treinando</Badge>;
+      case 'learning':
+        return <Badge className="bg-blue-500">Aprendendo</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -85,39 +87,39 @@ const AgentsPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">AI Agents</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Agentes IA</h1>
           <p className="text-muted-foreground">
-            Manage your AI assistants and their knowledge sources
+            Gerenciar seus assistentes de IA e suas fontes de conhecimento
           </p>
         </div>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Agent
+          Criar Novo Agente
         </Button>
       </div>
 
       <Tabs defaultValue="agents">
         <TabsList>
-          <TabsTrigger value="agents">AI Agents</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="agents">Agentes IA</TabsTrigger>
+          <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
         <TabsContent value="agents" className="space-y-6 mt-6">
           {isLoading ? (
             <div className="py-12 text-center">
-              <p>Loading AI agents...</p>
+              <p>Carregando agentes IA...</p>
             </div>
           ) : agents.length === 0 ? (
             <Card>
               <CardContent className="py-12 flex flex-col items-center justify-center">
                 <Bot className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-medium mb-2">No AI Agents Found</h3>
+                <h3 className="text-xl font-medium mb-2">Nenhum Agente IA Encontrado</h3>
                 <p className="text-muted-foreground mb-6 text-center max-w-md">
-                  Create your first AI agent to start automating guest communications
+                  Crie seu primeiro agente IA para começar a automatizar comunicações com hóspedes
                 </p>
                 <Button>
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Create New Agent
+                  Criar Novo Agente
                 </Button>
               </CardContent>
             </Card>
@@ -138,18 +140,18 @@ const AgentsPage: React.FC = () => {
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <h4 className="text-sm font-medium mb-2">Capabilities</h4>
+                        <h4 className="text-sm font-medium mb-2">Capacidades</h4>
                         <div className="flex flex-wrap gap-2">
-                          {agent.capabilities.map((capability, index) => (
+                          {agent.capabilities && agent.capabilities.map((capability, index) => (
                             <Badge key={index} variant="secondary">{capability}</Badge>
                           ))}
                         </div>
                       </div>
                       
                       <div>
-                        <h4 className="text-sm font-medium mb-2">Knowledge Sources</h4>
+                        <h4 className="text-sm font-medium mb-2">Fontes de Conhecimento</h4>
                         <p className="text-sm text-muted-foreground">
-                          Using {agent.knowledgeBaseSources.length} knowledge sources
+                          Usando {agent.knowledgeBaseIds.length} fontes de conhecimento
                         </p>
                       </div>
                       
@@ -167,7 +169,7 @@ const AgentsPage: React.FC = () => {
                     <Button variant="outline" size="sm" asChild>
                       <a href={`/agents/${agent.id}`}>
                         <Settings className="mr-2 h-4 w-4" />
-                        Configure
+                        Configurar
                       </a>
                     </Button>
                     <Button 
@@ -179,12 +181,12 @@ const AgentsPage: React.FC = () => {
                       {agent.status === 'training' ? (
                         <>
                           <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                          Training...
+                          Treinando...
                         </>
                       ) : (
                         <>
                           <Zap className="mr-2 h-4 w-4" />
-                          Train Agent
+                          Treinar Agente
                         </>
                       )}
                     </Button>
@@ -198,40 +200,40 @@ const AgentsPage: React.FC = () => {
         <TabsContent value="settings" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>WhatsApp Integration Settings</CardTitle>
+              <CardTitle>Configurações de Integração do WhatsApp</CardTitle>
               <CardDescription>
-                Configure the WhatsApp Business API integration for your AI agents
+                Configure a integração da API WhatsApp Business para seus agentes de IA
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium mb-2">WhatsApp Business Account</h4>
+                  <h4 className="text-sm font-medium mb-2">Conta WhatsApp Business</h4>
                   <div className="flex items-center justify-between p-3 border rounded-md">
                     <div>
                       <p className="font-medium">Guestfy Business Account</p>
-                      <p className="text-sm text-muted-foreground">Connected: April 5, 2023</p>
+                      <p className="text-sm text-muted-foreground">Conectado: 5 de Abril, 2023</p>
                     </div>
-                    <Badge className="bg-green-500">Active</Badge>
+                    <Badge className="bg-green-500">Ativo</Badge>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Phone Numbers</h4>
+                  <h4 className="text-sm font-medium mb-2">Números de Telefone</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border rounded-md">
                       <div>
                         <p className="font-medium">+1 (555) 123-4567</p>
-                        <p className="text-sm text-muted-foreground">Primary Business Number</p>
+                        <p className="text-sm text-muted-foreground">Número Principal</p>
                       </div>
-                      <Badge className="bg-green-500">Active</Badge>
+                      <Badge className="bg-green-500">Ativo</Badge>
                     </div>
                   </div>
                 </div>
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Update WhatsApp Settings</Button>
+              <Button>Atualizar Configurações do WhatsApp</Button>
             </CardFooter>
           </Card>
         </TabsContent>

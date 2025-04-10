@@ -5,8 +5,9 @@ export type AIAgent = {
   id: string;
   name: string;
   description: string;
-  status: 'active' | 'inactive' | 'learning';
+  status: 'active' | 'inactive' | 'learning' | 'training';
   knowledgeBaseIds: string[];
+  capabilities: string[];
   lastActive: string;
   conversationsHandled: number;
   avatar?: string;
@@ -41,6 +42,17 @@ const generateMockAgents = (count: number): AIAgent[] => {
     'inactive',
     'learning'
   ];
+
+  const capabilities = [
+    'Responder dúvidas',
+    'Enviar mensagens',
+    'Agendar serviços',
+    'Auxiliar check-in',
+    'Auxiliar check-out',
+    'Recomendar locais',
+    'Informações do quarto',
+    'Solicitações especiais'
+  ];
   
   for (let i = 0; i < count; i++) {
     agents.push({
@@ -49,6 +61,11 @@ const generateMockAgents = (count: number): AIAgent[] => {
       description: `Um agente de IA para ${names[i % names.length].toLowerCase()}`,
       status: statuses[i % statuses.length],
       knowledgeBaseIds: [`kb-${i + 1}`],
+      capabilities: [
+        capabilities[i % capabilities.length],
+        capabilities[(i + 1) % capabilities.length],
+        capabilities[(i + 2) % capabilities.length]
+      ],
       lastActive: new Date(Date.now() - Math.floor(Math.random() * 86400000 * 5)).toISOString(),
       conversationsHandled: Math.floor(Math.random() * 100),
       avatar: i % 2 === 0 ? `/agents/avatar-${i}.png` : undefined
@@ -131,4 +148,54 @@ export const fetchAITasks = async (): Promise<AITask[]> => {
 export const fetchAITaskById = async (id: string): Promise<AITask | null> => {
   const tasks = await fetchAITasks();
   return tasks.find(task => task.id === id) || null;
+};
+
+// Adicionando funções que estavam sendo utilizadas mas não existiam
+export const updateAIAgent = async (
+  id: string, 
+  updates: Partial<AIAgent>
+): Promise<AIAgent | null> => {
+  try {
+    // Simular uma atualização do agente
+    const agent = await fetchAIAgentById(id);
+    if (!agent) return null;
+    
+    const updatedAgent: AIAgent = {
+      ...agent,
+      ...updates
+    };
+    
+    // Em um caso real, aqui teria uma chamada de API
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(updatedAgent);
+      }, 300);
+    });
+  } catch (error) {
+    console.error("Error updating agent:", error);
+    return null;
+  }
+};
+
+export const trainAIAgent = async (id: string): Promise<AIAgent | null> => {
+  try {
+    // Simular processo de treinamento
+    const agent = await fetchAIAgentById(id);
+    if (!agent) return null;
+    
+    const trainingAgent: AIAgent = {
+      ...agent,
+      status: 'training'
+    };
+    
+    // Simulando resposta de API após iniciar o treinamento
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(trainingAgent);
+      }, 300);
+    });
+  } catch (error) {
+    console.error("Error training agent:", error);
+    return null;
+  }
 };
