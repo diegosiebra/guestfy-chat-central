@@ -12,10 +12,13 @@ import AgentsPage from "./pages/AgentsPage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import NotFound from "./pages/NotFound";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
 const App = () => (
+  // Ensure QueryClientProvider is the outermost wrapper
   <QueryClientProvider client={queryClient}>
+    {/* Then the TooltipProvider */}
     <TooltipProvider>
       <Toaster />
       <Sonner />
