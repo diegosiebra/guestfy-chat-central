@@ -15,6 +15,7 @@ import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SelectCompanyPage from "./pages/SelectCompanyPage";
+import CreateCompanyPage from "./pages/CreateCompanyPage";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -38,6 +39,15 @@ const App = () => (
               element={
                 <ProtectedRoute requireCompany={false}>
                   <SelectCompanyPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/create-company" 
+              element={
+                <ProtectedRoute requireCompany={false}>
+                  <CreateCompanyPage />
                 </ProtectedRoute>
               } 
             />

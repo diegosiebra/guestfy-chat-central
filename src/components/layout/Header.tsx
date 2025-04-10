@@ -11,13 +11,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Building } from "lucide-react";
+import { Bell, Building, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { user, selectedCompany, logout } = useAuth();
+  const navigate = useNavigate();
   const unreadNotifications = 2;
+
+  const canCreateMoreCompanies = user?.companies.length < 2;
 
   return (
     <header className="bg-white border-b border-border h-16 px-4 flex items-center justify-between">
@@ -92,6 +96,15 @@ const Header: React.FC = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/select-company")}>
+              Switch Company
+            </DropdownMenuItem>
+            {canCreateMoreCompanies && (
+              <DropdownMenuItem onClick={() => navigate("/create-company")}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Company
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />

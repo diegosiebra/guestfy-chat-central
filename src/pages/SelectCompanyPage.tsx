@@ -1,16 +1,21 @@
 
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Building } from "lucide-react";
+import { Building, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const SelectCompanyPage: React.FC = () => {
   const { user, selectCompany } = useAuth();
+  const navigate = useNavigate();
 
   if (!user) {
     return null;
   }
+
+  const canCreateMoreCompanies = user.companies.length < 2;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
@@ -52,6 +57,18 @@ const SelectCompanyPage: React.FC = () => {
               ))}
             </div>
           </CardContent>
+          <CardFooter>
+            {canCreateMoreCompanies && (
+              <Button 
+                onClick={() => navigate("/create-company")} 
+                variant="outline"
+                className="w-full"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Company
+              </Button>
+            )}
+          </CardFooter>
         </Card>
       </div>
     </div>

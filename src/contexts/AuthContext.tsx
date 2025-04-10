@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 // Define types for our context
 export interface Company {
@@ -24,6 +25,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   selectCompany: (company: Company) => void;
+  createCompany: (name: string, logo?: string) => Promise<void>;
 }
 
 // Create context with default values
@@ -35,6 +37,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   selectCompany: () => {},
+  createCompany: async () => {},
 });
 
 // Mock data for development
@@ -95,19 +98,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error("Invalid credentials");
       }
       
-      // Set the authenticated user
-      setUser(MOCK_USER);
-      localStorage.setItem("user", JSON.stringify(MOCK_USER));
+      // For testing, let's use an empty companies array to allow creation
+      const testUser = {
+        ...MOCK_USER,
+        companies: []
+      };
       
-      // Navigate to company selection if user has multiple companies
-      if (MOCK_USER.companies.length > 1) {
-        navigate("/select-company");
-      } else if (MOCK_USER.companies.length === 1) {
+      // Set the authenticated user
+      setUser(testUser);
+      localStorage.setItem("user", JSON.stringify(testUser));
+      
+      // Navigate to company creation if user has no companies
+      if (testUser.companies.length === 0) {
+        navigate("/create-company");
+      } else if (testUser.companies.length === 1) {
         // Auto-select the only company
-        const company = MOCK_USER.companies[0];
+        const company = testUser.companies[0];
         setSelectedCompany(company);
         localStorage.setItem("selectedCompany", JSON.stringify(company));
         navigate("/");
+      } else {
+        // Navigate to company selection if user has multiple companies
+        navigate("/select-company");
       }
     } catch (error) {
       console.error("Login failed:", error);
@@ -133,6 +145,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     navigate("/");
   };
 
+  // Create company function
+  const createCompany = async (name: string, logo?: string) => {
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    if (user.companies.length >= 2) {
+      toast({
+        title: "Company limit reached",
+        description: "You can only create up to 2 companies.",
+        variant: "destructive"
+      });
+      throw new Error("You can only create up to 2 companies");
+    }
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Create a new company with a unique ID
+      const newCompany: Company = {
+        id: Date.now().toString(),
+        name,
+        logo
+      };
+
+      // Update user's companies
+      const updatedUser = {
+        ...user,
+        companies: [...user.companies, newCompany]
+      };
+
+      // Update state and localStorage
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      // If this is the first company, auto-select it
+      if (updatedUser.companies.length === 1) {
+        setSelectedCompany(newCompany);
+        localStorage.setItem("selectedCompany", JSON.stringify(newCompany));
+      }
+
+      toast({
+        title: "Company created",
+        description: `${name} has been successfully created.`
+      });
+
+      // Navigate appropriately
+      if (updatedUser.companies.length === 1) {
+        navigate("/");
+      } else {
+        navigate("/select-company");
+      }
+    } catch (error) {
+      console.error("Company creation failed:", error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -143,6 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         selectCompany,
+        createCompany,
       }}
     >
       {children}
