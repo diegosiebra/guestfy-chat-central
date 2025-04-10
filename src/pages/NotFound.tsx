@@ -9,7 +9,7 @@ const NotFound: React.FC = () => {
 
   React.useEffect(() => {
     console.error(
-      "404 Error: User attempted to access non-existent route:",
+      "Erro 404: Usuário tentou acessar rota inexistente:",
       location.pathname
     );
   }, [location.pathname]);
@@ -23,13 +23,13 @@ const NotFound: React.FC = () => {
           </div>
         </div>
         <h1 className="text-4xl font-bold">404</h1>
-        <h2 className="text-2xl font-medium">Page Not Found</h2>
+        <h2 className="text-2xl font-medium">Página Não Encontrada</h2>
         <p className="text-muted-foreground">
-          The page you are looking for doesn't exist or has been moved.
+          A página que você está procurando não existe ou foi movida.
         </p>
         <div className="pt-4">
           <Button asChild>
-            <a href="/">Return to Dashboard</a>
+            <a href="/">Voltar para o Dashboard</a>
           </Button>
         </div>
       </div>

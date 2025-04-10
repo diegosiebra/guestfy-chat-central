@@ -26,15 +26,15 @@ const LoginPage: React.FC = () => {
     try {
       await login(email, password);
       toast({
-        title: "Login successful",
-        description: "Welcome back!",
+        title: "Login bem-sucedido",
+        description: "Bem-vindo de volta!",
       });
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+      setError("E-mail ou senha inválidos. Tente novamente.");
       toast({
         variant: "destructive",
-        title: "Login failed",
-        description: "Invalid email or password. Please try again.",
+        title: "Falha no login",
+        description: "E-mail ou senha inválidos. Tente novamente.",
       });
     } finally {
       setIsLoading(false);
@@ -46,14 +46,14 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">Guestfy</h1>
-          <p className="text-gray-600">AI-Powered Guest Management Platform</p>
+          <p className="text-gray-600">Plataforma de Gerenciamento de Hóspedes com IA</p>
         </div>
         
         <Card>
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle>Entrar</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Digite suas credenciais para acessar sua conta
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-mail</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
+                    placeholder="nome@exemplo.com"
                     className="pl-9"
                     required
                   />
@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -102,12 +102,12 @@ const LoginPage: React.FC = () => {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center text-sm text-gray-500">
-            Demo credentials: manager@guestfy.com / password
+            Credenciais de demonstração: manager@guestfy.com / password
           </CardFooter>
         </Card>
       </div>

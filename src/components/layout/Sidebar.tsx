@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
       icon: Home,
     },
     {
-      title: "Reservations",
+      title: "Reservas",
       path: "/reservations",
       icon: CalendarDays,
     },
@@ -40,17 +40,17 @@ const Sidebar: React.FC = () => {
       icon: MessageSquare,
     },
     {
-      title: "AI Agents",
+      title: "Agentes IA",
       path: "/agents",
       icon: Bot,
     },
     {
-      title: "Knowledge Base",
+      title: "Base de Conhecimento",
       path: "/knowledge-base",
       icon: BookOpen,
     },
     {
-      title: "Financials",
+      title: "Financeiro",
       path: "/financials",
       icon: DollarSign,
     },
@@ -95,7 +95,7 @@ const Sidebar: React.FC = () => {
                   <SidebarMenuButton asChild>
                     <NavLink to="/settings">
                       <Settings className="h-5 w-5" />
-                      <span>Settings</span>
+                      <span>Configurações</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -22,14 +22,14 @@ const SelectCompanyPage: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">Guestfy</h1>
-          <p className="text-gray-600">AI-Powered Guest Management Platform</p>
+          <p className="text-gray-600">Plataforma de Gerenciamento de Hóspedes com IA</p>
         </div>
         
         <Card>
           <CardHeader>
-            <CardTitle>Select Company</CardTitle>
+            <CardTitle>Selecionar Empresa</CardTitle>
             <CardDescription>
-              Choose a company to manage
+              Escolha uma empresa para gerenciar
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -65,7 +65,7 @@ const SelectCompanyPage: React.FC = () => {
                 className="w-full"
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Add New Company
+                Adicionar Nova Empresa
               </Button>
             )}
           </CardFooter>

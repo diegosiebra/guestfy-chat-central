@@ -26,9 +26,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-// Create schema for form validation
+// Criar schema para validação do formulário
 const companyFormSchema = z.object({
-  name: z.string().min(2, { message: "Company name must be at least 2 characters" }).max(50),
+  name: z.string().min(2, { message: "Nome da empresa deve ter pelo menos 2 caracteres" }).max(50),
   logo: z.string().optional(),
 });
 
@@ -47,12 +47,12 @@ const CreateCompanyPage: React.FC = () => {
     },
   });
 
-  // Go to company selection if user already has companies
+  // Ir para seleção de empresa se o usuário já tiver empresas
   React.useEffect(() => {
     if (user?.companies.length === 2) {
       toast({
-        title: "Company limit reached",
-        description: "You can only create up to 2 companies.",
+        title: "Limite de empresas atingido",
+        description: "Você só pode criar até 2 empresas.",
         variant: "destructive"
       });
       navigate("/select-company");
@@ -68,7 +68,7 @@ const CreateCompanyPage: React.FC = () => {
     try {
       await createCompany(data.name, data.logo || undefined);
     } catch (error) {
-      console.error("Failed to create company:", error);
+      console.error("Falha ao criar empresa:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -81,17 +81,17 @@ const CreateCompanyPage: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">Guestfy</h1>
-          <p className="text-gray-600">AI-Powered Guest Management Platform</p>
+          <p className="text-gray-600">Plataforma de Gerenciamento de Hóspedes com IA</p>
         </div>
         
         <Card>
           <CardHeader>
-            <CardTitle>Create a Company</CardTitle>
+            <CardTitle>Criar uma Empresa</CardTitle>
             <CardDescription>
-              Set up your company to manage with Guestfy
+              Configure sua empresa para gerenciar com o Guestfy
               {remainingCompanies < 2 && (
                 <div className="mt-2 text-amber-600 font-medium">
-                  You can create {remainingCompanies} more company
+                  Você pode criar mais {remainingCompanies} empresa
                 </div>
               )}
             </CardDescription>
@@ -104,9 +104,9 @@ const CreateCompanyPage: React.FC = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Name</FormLabel>
+                      <FormLabel>Nome da Empresa</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter company name" {...field} />
+                        <Input placeholder="Digite o nome da empresa" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -117,9 +117,9 @@ const CreateCompanyPage: React.FC = () => {
                   name="logo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Logo URL (optional)</FormLabel>
+                      <FormLabel>URL do Logo (opcional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter logo URL" {...field} />
+                        <Input placeholder="Digite a URL do logo" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -131,7 +131,7 @@ const CreateCompanyPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      Your company will be used to organize your properties and reservations.
+                      Sua empresa será usada para organizar suas propriedades e reservas.
                     </p>
                   </div>
                 </div>
@@ -143,12 +143,12 @@ const CreateCompanyPage: React.FC = () => {
                     onClick={() => navigate("/select-company")}
                     disabled={isSubmitting}
                   >
-                    Cancel
+                    Cancelar
                   </Button>
                 )}
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Company
+                  Criar Empresa
                 </Button>
               </CardFooter>
             </form>

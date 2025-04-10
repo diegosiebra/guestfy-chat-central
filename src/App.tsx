@@ -17,23 +17,23 @@ import LoginPage from "./pages/LoginPage";
 import SelectCompanyPage from "./pages/SelectCompanyPage";
 import CreateCompanyPage from "./pages/CreateCompanyPage";
 
-// Create a new QueryClient instance
+// Criar uma nova instância de QueryClient
 const queryClient = new QueryClient();
 
 const App = () => (
-  // Ensure QueryClientProvider is the outermost wrapper
+  // Garantir que QueryClientProvider seja o wrapper mais externo
   <QueryClientProvider client={queryClient}>
-    {/* Then the TooltipProvider */}
+    {/* Em seguida, o TooltipProvider */}
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Public routes */}
+            {/* Rotas públicas */}
             <Route path="/login" element={<LoginPage />} />
             
-            {/* Semi-protected routes (requires auth but not company) */}
+            {/* Rotas semi-protegidas (requer autenticação, mas não empresa) */}
             <Route 
               path="/select-company" 
               element={
@@ -52,7 +52,7 @@ const App = () => (
               } 
             />
             
-            {/* Protected routes (require auth and company) */}
+            {/* Rotas protegidas (requerem autenticação e empresa) */}
             <Route element={
               <ProtectedRoute>
                 <AppLayout />

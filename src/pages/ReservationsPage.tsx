@@ -22,7 +22,7 @@ const ReservationsPage: React.FC = () => {
         setReservations(data);
         setFilteredReservations(data);
       } catch (error) {
-        console.error("Error loading reservations:", error);
+        console.error("Erro ao carregar reservas:", error);
       } finally {
         setIsLoading(false);
       }
@@ -38,14 +38,14 @@ const ReservationsPage: React.FC = () => {
   const filterReservations = () => {
     let filtered = [...reservations];
 
-    // Filter by status if not "all"
+    // Filtrar por status se não for "all"
     if (statusFilter !== 'all') {
       filtered = filtered.filter(
         (res) => res.status === statusFilter
       );
     }
 
-    // Filter by search term
+    // Filtrar por termo de busca
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -66,10 +66,10 @@ const ReservationsPage: React.FC = () => {
       day: 'numeric',
       year: 'numeric'
     };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
 
-  // Status badges
+  // Crachás de status
   const getStatusBadge = (status: ReservationStatus) => {
     const badgeClasses = {
       confirmed: "bg-green-100 text-green-800",
@@ -79,9 +79,17 @@ const ReservationsPage: React.FC = () => {
       'no-show': "bg-gray-100 text-gray-800"
     };
     
+    const statusTranslations = {
+      confirmed: "Confirmada",
+      pending: "Pendente",
+      cancelled: "Cancelada",
+      completed: "Concluída",
+      'no-show': "Não Compareceu"
+    };
+    
     return (
       <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${badgeClasses[status]}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {statusTranslations[status]}
       </span>
     );
   };
@@ -89,17 +97,17 @@ const ReservationsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Reservations</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Reservas</h1>
         <p className="text-muted-foreground">
-          Manage and view all your property reservations
+          Gerencie e visualize todas as reservas das suas propriedades
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Reservations</CardTitle>
+          <CardTitle>Todas as Reservas</CardTitle>
           <CardDescription>
-            View and filter all reservations from Stay.net
+            Visualize e filtre todas as reservas do Stay.net
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -107,7 +115,7 @@ const ReservationsPage: React.FC = () => {
             <div className="relative flex-1">
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by guest, property or ID..."
+                placeholder="Buscar por hóspede, propriedade ou ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -118,16 +126,16 @@ const ReservationsPage: React.FC = () => {
                 <SelectTrigger className="w-[180px]">
                   <div className="flex items-center">
                     <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder="Filtrar por status" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="no-show">No Show</SelectItem>
+                  <SelectItem value="all">Todos os Status</SelectItem>
+                  <SelectItem value="confirmed">Confirmada</SelectItem>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                  <SelectItem value="cancelled">Cancelada</SelectItem>
+                  <SelectItem value="completed">Concluída</SelectItem>
+                  <SelectItem value="no-show">Não Compareceu</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -135,13 +143,13 @@ const ReservationsPage: React.FC = () => {
 
           {isLoading ? (
             <div className="py-20 text-center">
-              <p>Loading reservations...</p>
+              <p>Carregando reservas...</p>
             </div>
           ) : filteredReservations.length === 0 ? (
             <div className="py-20 text-center border rounded-lg">
-              <p className="text-muted-foreground">No reservations found</p>
+              <p className="text-muted-foreground">Nenhuma reserva encontrada</p>
               <Button variant="outline" className="mt-4" onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}>
-                Clear Filters
+                Limpar Filtros
               </Button>
             </div>
           ) : (
@@ -152,22 +160,22 @@ const ReservationsPage: React.FC = () => {
                     <th className="text-left py-3 px-4 font-medium">ID</th>
                     <th className="text-left py-3 px-4 font-medium">
                       <div className="flex items-center gap-1">
-                        <User className="h-4 w-4" /> Guest
+                        <User className="h-4 w-4" /> Hóspede
                       </div>
                     </th>
                     <th className="text-left py-3 px-4 font-medium">
                       <div className="flex items-center gap-1">
-                        <Home className="h-4 w-4" /> Property
+                        <Home className="h-4 w-4" /> Propriedade
                       </div>
                     </th>
                     <th className="text-left py-3 px-4 font-medium">
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" /> Dates
+                        <Calendar className="h-4 w-4" /> Datas
                       </div>
                     </th>
                     <th className="text-left py-3 px-4 font-medium">Status</th>
                     <th className="text-right py-3 px-4 font-medium">Total</th>
-                    <th className="text-right py-3 px-4 font-medium">Actions</th>
+                    <th className="text-right py-3 px-4 font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,7 +201,7 @@ const ReservationsPage: React.FC = () => {
                       <td className="py-3 px-4">
                         <div className="font-medium">{formatDate(reservation.checkInDate)}</div>
                         <div className="text-sm text-muted-foreground">
-                          to {formatDate(reservation.checkOutDate)}
+                          a {formatDate(reservation.checkOutDate)}
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -202,11 +210,11 @@ const ReservationsPage: React.FC = () => {
                       <td className="py-3 px-4 text-right">
                         <div className="font-medium">{reservation.currency} {reservation.totalPrice}</div>
                         <div className="text-sm text-muted-foreground">
-                          {reservation.guestCount} {reservation.guestCount === 1 ? 'guest' : 'guests'}
+                          {reservation.guestCount} {reservation.guestCount === 1 ? 'hóspede' : 'hóspedes'}
                         </div>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Button size="sm" variant="outline">View</Button>
+                        <Button size="sm" variant="outline">Visualizar</Button>
                       </td>
                     </tr>
                   ))}

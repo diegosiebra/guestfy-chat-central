@@ -60,18 +60,18 @@ const Header: React.FC = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuLabel>Notificações</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <div className="flex flex-col">
-                <span className="font-medium">New reservation</span>
-                <span className="text-sm text-muted-foreground">John Doe booked Room 101</span>
+                <span className="font-medium">Nova reserva</span>
+                <span className="text-sm text-muted-foreground">João Silva reservou o Quarto 101</span>
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <div className="flex flex-col">
-                <span className="font-medium">Message received</span>
-                <span className="text-sm text-muted-foreground">New chat message from Sarah</span>
+                <span className="font-medium">Mensagem recebida</span>
+                <span className="text-sm text-muted-foreground">Nova mensagem de chat de Maria</span>
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -81,7 +81,7 @@ const Header: React.FC = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
-                <AvatarImage src="/placeholder.svg" alt="User" />
+                <AvatarImage src="/placeholder.svg" alt="Usuário" />
                 <AvatarFallback>{user?.name.substring(0, 2) || "GM"}</AvatarFallback>
               </Avatar>
             </Button>
@@ -89,7 +89,7 @@ const Header: React.FC = () => {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user?.name || "Guest Manager"}</p>
+                <p className="text-sm font-medium leading-none">{user?.name || "Gerente de Hospedagem"}</p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {user?.email || "manager@guestfy.com"}
                 </p>
@@ -97,18 +97,18 @@ const Header: React.FC = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate("/select-company")}>
-              Switch Company
+              Trocar Empresa
             </DropdownMenuItem>
             {canCreateMoreCompanies && (
               <DropdownMenuItem onClick={() => navigate("/create-company")}>
                 <Plus className="mr-2 h-4 w-4" />
-                Create Company
+                Criar Empresa
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Perfil</DropdownMenuItem>
+            <DropdownMenuItem>Configurações</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
