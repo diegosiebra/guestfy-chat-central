@@ -29,6 +29,16 @@ export interface PropertyOwner {
   phones: { iso: string }[];
 }
 
+export interface PropertyTypeMeta {
+  _mstitle: {
+    pt_BR: string;
+    en_US: string;
+    es_ES: string;
+    pt_PT: string;
+    [key: string]: string | undefined;
+  };
+}
+
 export interface Property {
   _id: string;
   id: string;
@@ -72,4 +82,9 @@ export interface Property {
   instantBooking: boolean;
   owner: PropertyOwner;
   groupIds?: string[];
+  // Add the missing properties
+  _t_propertyTypeMeta?: PropertyTypeMeta;
+  _idtype?: string;
+  _t_typeMeta?: PropertyTypeMeta;
+  subtype?: string;
 }
