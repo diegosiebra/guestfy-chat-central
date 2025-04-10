@@ -7,7 +7,6 @@ import Header from "./Header";
 
 const AppLayout: React.FC = () => {
   return (
-    // Remover o TooltipProvider aqui, já que ele já está fornecido em App.tsx
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
         <Sidebar />

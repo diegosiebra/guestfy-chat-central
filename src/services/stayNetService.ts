@@ -1,4 +1,3 @@
-
 // Mock service for Stay.net API
 // In a real implementation, this would make actual API calls to Stay.net
 
@@ -174,6 +173,52 @@ const generateMockReservations = (count: number): Reservation[] => {
   }
 
   return reservations;
+};
+
+// Funções para filtrar reservas conforme os critérios solicitados
+export const getUpcomingReservations = (reservations: Reservation[]): Reservation[] => {
+  const today = new Date();
+  const oneWeekFromNow = new Date();
+  oneWeekFromNow.setDate(today.getDate() + 7);
+  
+  return reservations.filter(res => {
+    const checkInDate = new Date(res.checkInDate);
+    return (
+      (res.status === 'confirmed' || res.status === 'pending') && 
+      checkInDate > oneWeekFromNow
+    );
+  });
+};
+
+export const getPreCheckInReservations = (reservations: Reservation[]): Reservation[] => {
+  const today = new Date();
+  const oneWeekFromNow = new Date();
+  oneWeekFromNow.setDate(today.getDate() + 7);
+  
+  return reservations.filter(res => {
+    const checkInDate = new Date(res.checkInDate);
+    return (
+      (res.status === 'confirmed' || res.status === 'pending') && 
+      checkInDate <= oneWeekFromNow &&
+      checkInDate >= today
+    );
+  });
+};
+
+export const getPreCheckoutReservations = (reservations: Reservation[]): Reservation[] => {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+  
+  // Converter para datas sem hora para comparação apenas por dia
+  const tomorrowDate = tomorrow.toISOString().split('T')[0];
+  
+  return reservations.filter(res => {
+    return (
+      res.status === 'confirmed' && 
+      res.checkOutDate === tomorrowDate
+    );
+  });
 };
 
 // Mock API methods

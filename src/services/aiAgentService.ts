@@ -1,121 +1,134 @@
 
-// Mock service for AI Agent management
-// In a real implementation, this would integrate with a backend service
-
-export type AIAgentStatus = 'active' | 'inactive' | 'training';
+// Mock service for AI Agent API
 
 export type AIAgent = {
   id: string;
   name: string;
   description: string;
-  whatsappBusinessAccountId?: string;
-  status: AIAgentStatus;
-  capabilities: string[];
-  knowledgeBaseSources: string[];
+  status: 'active' | 'inactive' | 'learning';
+  knowledgeBaseIds: string[];
+  lastActive: string;
+  conversationsHandled: number;
+  avatar?: string;
+};
+
+export type AITask = {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  priority: 'high' | 'medium' | 'low';
   createdAt: string;
-  updatedAt: string;
+  dueDate?: string;
+  agentId: string;
+  reservationId?: string;
+  clientId?: string;
 };
 
 // Mock data
-let mockAgents: AIAgent[] = [
-  {
-    id: 'agent-1',
-    name: 'GuestAssistant',
-    description: 'Primary guest assistant for answering common questions',
-    whatsappBusinessAccountId: 'whatsapp-business-1',
-    status: 'active',
-    capabilities: [
-      'Answer FAQs',
-      'Provide check-in information',
-      'Give local recommendations',
-      'Handle basic booking inquiries'
-    ],
-    knowledgeBaseSources: ['list-1', 'list-2', 'list-3', 'info-1', 'info-2', 'info-3'],
-    createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 2).toISOString()
-  },
-  {
-    id: 'agent-2',
-    name: 'BookingAssistant',
-    description: 'Specialized agent for handling booking requests and modifications',
-    status: 'inactive',
-    capabilities: [
-      'Process booking requests',
-      'Handle date changes',
-      'Answer pricing questions',
-      'Process cancellations'
-    ],
-    knowledgeBaseSources: ['list-2', 'info-3'],
-    createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 1).toISOString()
+const generateMockAgents = (count: number): AIAgent[] => {
+  const agents: AIAgent[] = [];
+  
+  const names = [
+    'Assistente Virtual',
+    'Concierge Digital',
+    'Suporte ao Hóspede',
+    'Atendente Virtual'
+  ];
+  
+  const statuses: ('active' | 'inactive' | 'learning')[] = [
+    'active',
+    'inactive',
+    'learning'
+  ];
+  
+  for (let i = 0; i < count; i++) {
+    agents.push({
+      id: `agent-${i + 1}`,
+      name: names[i % names.length],
+      description: `Um agente de IA para ${names[i % names.length].toLowerCase()}`,
+      status: statuses[i % statuses.length],
+      knowledgeBaseIds: [`kb-${i + 1}`],
+      lastActive: new Date(Date.now() - Math.floor(Math.random() * 86400000 * 5)).toISOString(),
+      conversationsHandled: Math.floor(Math.random() * 100),
+      avatar: i % 2 === 0 ? `/agents/avatar-${i}.png` : undefined
+    });
   }
-];
+  
+  return agents;
+};
 
-// API methods
+// Mock data para tarefas
+const generateMockTasks = (count: number): AITask[] => {
+  const tasks: AITask[] = [];
+  
+  const titles = [
+    'Verificar preferências de check-in',
+    'Confirmar horário de chegada',
+    'Enviar instruções de acesso',
+    'Verificar necessidades especiais',
+    'Confirmar número de hóspedes',
+    'Oferecer serviços adicionais',
+    'Perguntar sobre transporte',
+    'Sugerir restaurantes locais'
+  ];
+  
+  const statuses: ('pending' | 'completed' | 'cancelled')[] = [
+    'pending',
+    'completed',
+    'cancelled'
+  ];
+  
+  const priorities: ('high' | 'medium' | 'low')[] = [
+    'high',
+    'medium',
+    'low'
+  ];
+  
+  for (let i = 0; i < count; i++) {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + Math.floor(Math.random() * 7));
+    
+    tasks.push({
+      id: `task-${i + 1}`,
+      title: titles[i % titles.length],
+      description: `Detalhes sobre a tarefa: ${titles[i % titles.length].toLowerCase()}`,
+      status: statuses[i % statuses.length],
+      priority: priorities[i % priorities.length],
+      createdAt: new Date(Date.now() - Math.floor(Math.random() * 86400000 * 3)).toISOString(),
+      dueDate: dueDate.toISOString(),
+      agentId: `agent-${(i % 2) + 1}`,
+      reservationId: i % 3 === 0 ? `reservation-${i + 1}` : undefined,
+      clientId: i % 4 === 0 ? `client-${i + 1}` : undefined
+    });
+  }
+  
+  return tasks;
+};
+
+// Mock API methods
 export const fetchAIAgents = async (): Promise<AIAgent[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve([...mockAgents]);
-    }, 300);
+      resolve(generateMockAgents(2));
+    }, 500);
   });
 };
 
 export const fetchAIAgentById = async (id: string): Promise<AIAgent | null> => {
-  const agent = mockAgents.find(agent => agent.id === id);
-  return agent ? { ...agent } : null;
+  const agents = await fetchAIAgents();
+  return agents.find(agent => agent.id === id) || null;
 };
 
-export const createAIAgent = async (agent: Omit<AIAgent, 'id' | 'createdAt' | 'updatedAt'>): Promise<AIAgent> => {
-  const newAgent: AIAgent = {
-    ...agent,
-    id: `agent-${mockAgents.length + 1}`,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  
-  mockAgents.push(newAgent);
-  return { ...newAgent };
+export const fetchAITasks = async (): Promise<AITask[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(generateMockTasks(8));
+    }, 500);
+  });
 };
 
-export const updateAIAgent = async (id: string, updates: Partial<Omit<AIAgent, 'id' | 'createdAt' | 'updatedAt'>>): Promise<AIAgent | null> => {
-  const index = mockAgents.findIndex(agent => agent.id === id);
-  
-  if (index === -1) {
-    return null;
-  }
-  
-  mockAgents[index] = {
-    ...mockAgents[index],
-    ...updates,
-    updatedAt: new Date().toISOString()
-  };
-  
-  return { ...mockAgents[index] };
-};
-
-export const deleteAIAgent = async (id: string): Promise<boolean> => {
-  const initialLength = mockAgents.length;
-  mockAgents = mockAgents.filter(agent => agent.id !== id);
-  return mockAgents.length < initialLength;
-};
-
-export const trainAIAgent = async (id: string): Promise<AIAgent | null> => {
-  const agent = mockAgents.find(agent => agent.id === id);
-  
-  if (!agent) {
-    return null;
-  }
-  
-  agent.status = 'training';
-  agent.updatedAt = new Date().toISOString();
-  
-  // Simulate training completion after a delay
-  setTimeout(() => {
-    if (agent) {
-      agent.status = 'active';
-      agent.updatedAt = new Date().toISOString();
-    }
-  }, 5000);
-  
-  return { ...agent };
+export const fetchAITaskById = async (id: string): Promise<AITask | null> => {
+  const tasks = await fetchAITasks();
+  return tasks.find(task => task.id === id) || null;
 };

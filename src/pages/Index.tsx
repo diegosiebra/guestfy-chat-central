@@ -3,32 +3,42 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MessageSquare, Bot, BookOpen, TrendingUp, ArrowUpRight } from "lucide-react";
-import { fetchReservations, Reservation, ReservationStatus } from "@/services/stayNetService";
+import { CalendarDays, MessageSquare, Bot, BookOpen, TrendingUp, ArrowUpRight, CalendarCheck, ClipboardList, CalendarMinus } from "lucide-react";
+import { 
+  fetchReservations, 
+  Reservation, 
+  ReservationStatus, 
+  getUpcomingReservations, 
+  getPreCheckInReservations, 
+  getPreCheckoutReservations 
+} from "@/services/stayNetService";
 import { fetchConversations, Conversation } from "@/services/whatsAppService";
-import { fetchAIAgents, AIAgent } from "@/services/aiAgentService";
+import { fetchAIAgents, AIAgent, fetchAITasks, AITask } from "@/services/aiAgentService";
 
 const Index: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [aiAgents, setAIAgents] = useState<AIAgent[]>([]);
+  const [aiTasks, setAITasks] = useState<AITask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [resData, convData, agentData] = await Promise.all([
+        const [resData, convData, agentData, tasksData] = await Promise.all([
           fetchReservations(),
           fetchConversations(),
-          fetchAIAgents()
+          fetchAIAgents(),
+          fetchAITasks()
         ]);
         
         setReservations(resData);
         setConversations(convData);
         setAIAgents(agentData);
+        setAITasks(tasksData);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
         setIsLoading(false);
       }
@@ -37,16 +47,15 @@ const Index: React.FC = () => {
     fetchData();
   }, []);
 
-  // Calculate dashboard stats
+  // Calcular estatísticas do dashboard
   const unreadMessages = conversations.reduce((total, conv) => total + conv.unreadCount, 0);
   const activeAgents = aiAgents.filter(agent => agent.status === 'active').length;
-  const pendingReservations = reservations.filter(res => res.status === 'pending').length;
-  const confirmedReservations = reservations.filter(res => res.status === 'confirmed').length;
   
-  const upcomingReservations = reservations
-    .filter(res => res.status === 'confirmed' || res.status === 'pending')
-    .sort((a, b) => new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime())
-    .slice(0, 5);
+  // Filtrar reservas conforme os critérios solicitados
+  const upcomingReservations = getUpcomingReservations(reservations);
+  const preCheckInReservations = getPreCheckInReservations(reservations);
+  const preCheckoutReservations = getPreCheckoutReservations(reservations);
+  const pendingTasks = aiTasks.filter(task => task.status === 'pending').length;
   
   const recentConversations = [...conversations]
     .sort((a, b) => new Date(b.lastMessageTimestamp).getTime() - new Date(a.lastMessageTimestamp).getTime())
@@ -76,7 +85,7 @@ const Index: React.FC = () => {
       day: 'numeric',
       year: 'numeric'
     };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
 
   return (
@@ -84,90 +93,90 @@ const Index: React.FC = () => {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to your Guestfy management dashboard.
+          Bem-vindo ao seu painel de gerenciamento Guestfy.
         </p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Cards de Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Upcoming</CardDescription>
+            <CardDescription>Próximas</CardDescription>
             <CardTitle className="text-2xl flex justify-between">
-              {confirmedReservations}
-              <CalendarDays className="h-5 w-5 text-guestfy-500" />
+              {upcomingReservations.length}
+              <CalendarDays className="h-5 w-5 text-blue-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Confirmed reservations</p>
+            <p className="text-sm text-muted-foreground">Reservas a mais de uma semana</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Pending</CardDescription>
+            <CardDescription>Pré-Check-in</CardDescription>
             <CardTitle className="text-2xl flex justify-between">
-              {pendingReservations}
-              <TrendingUp className="h-5 w-5 text-yellow-500" />
+              {preCheckInReservations.length}
+              <CalendarCheck className="h-5 w-5 text-green-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Reservations pending approval</p>
+            <p className="text-sm text-muted-foreground">Reservas a uma semana ou menos</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Messages</CardDescription>
+            <CardDescription>Tarefas</CardDescription>
             <CardTitle className="text-2xl flex justify-between">
-              {unreadMessages}
-              <MessageSquare className="h-5 w-5 text-blue-500" />
+              {pendingTasks}
+              <ClipboardList className="h-5 w-5 text-yellow-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Unread client messages</p>
+            <p className="text-sm text-muted-foreground">Ações identificadas pela IA</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>AI Agents</CardDescription>
+            <CardDescription>Pré-Checkout</CardDescription>
             <CardTitle className="text-2xl flex justify-between">
-              {activeAgents}/{aiAgents.length}
-              <Bot className="h-5 w-5 text-purple-500" />
+              {preCheckoutReservations.length}
+              <CalendarMinus className="h-5 w-5 text-purple-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Active AI assistants</p>
+            <p className="text-sm text-muted-foreground">Saídas no dia seguinte</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Tabs for different section overviews */}
+      {/* Tabs para diferentes seções */}
       <Tabs defaultValue="reservations">
         <TabsList className="grid w-full grid-cols-3 mb-4">
-          <TabsTrigger value="reservations">Reservations</TabsTrigger>
-          <TabsTrigger value="conversations">Conversations</TabsTrigger>
-          <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+          <TabsTrigger value="reservations">Reservas</TabsTrigger>
+          <TabsTrigger value="conversations">Conversas</TabsTrigger>
+          <TabsTrigger value="knowledge">Base de Conhecimento</TabsTrigger>
         </TabsList>
         
-        {/* Reservations Tab */}
+        {/* Aba de Reservas */}
         <TabsContent value="reservations" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Reservations</CardTitle>
+              <CardTitle>Próximas Reservas</CardTitle>
               <CardDescription>
-                Your next 5 scheduled guest arrivals
+                Suas próximas 5 chegadas de hóspedes agendadas
               </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="py-6 text-center">Loading reservations...</div>
+                <div className="py-6 text-center">Carregando reservas...</div>
               ) : upcomingReservations.length === 0 ? (
-                <div className="py-6 text-center">No upcoming reservations found</div>
+                <div className="py-6 text-center">Nenhuma reserva próxima encontrada</div>
               ) : (
                 <div className="space-y-4">
-                  {upcomingReservations.map((reservation) => (
+                  {upcomingReservations.slice(0, 5).map((reservation) => (
                     <div key={reservation.id} className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0">
                       <div className="flex flex-col">
                         <span className="font-medium">
@@ -196,7 +205,7 @@ const Index: React.FC = () => {
             <CardFooter>
               <Button variant="outline" className="w-full" asChild>
                 <a href="/reservations">
-                  View All Reservations
+                  Ver Todas as Reservas
                   <ArrowUpRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
@@ -204,20 +213,20 @@ const Index: React.FC = () => {
           </Card>
         </TabsContent>
         
-        {/* Conversations Tab */}
+        {/* Aba de Conversas */}
         <TabsContent value="conversations" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Conversations</CardTitle>
+              <CardTitle>Conversas Recentes</CardTitle>
               <CardDescription>
-                Recent messages from your guests
+                Mensagens recentes dos seus hóspedes
               </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="py-6 text-center">Loading conversations...</div>
+                <div className="py-6 text-center">Carregando conversas...</div>
               ) : recentConversations.length === 0 ? (
-                <div className="py-6 text-center">No recent conversations found</div>
+                <div className="py-6 text-center">Nenhuma conversa recente encontrada</div>
               ) : (
                 <div className="space-y-4">
                   {recentConversations.map((conversation) => (
@@ -248,7 +257,7 @@ const Index: React.FC = () => {
             <CardFooter>
               <Button variant="outline" className="w-full" asChild>
                 <a href="/chats">
-                  View All Conversations
+                  Ver Todas as Conversas
                   <ArrowUpRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
@@ -256,13 +265,13 @@ const Index: React.FC = () => {
           </Card>
         </TabsContent>
         
-        {/* Knowledge Base Tab */}
+        {/* Aba da Base de Conhecimento */}
         <TabsContent value="knowledge" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Knowledge Base Overview</CardTitle>
+              <CardTitle>Visão Geral da Base de Conhecimento</CardTitle>
               <CardDescription>
-                Core information your AI agents use to assist guests
+                Informações principais que seus agentes de IA usam para auxiliar os hóspedes
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -272,13 +281,13 @@ const Index: React.FC = () => {
                     <BookOpen className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium">List Knowledge Bases</h3>
+                    <h3 className="font-medium">Bases de Conhecimento de Listagens</h3>
                     <p className="text-sm text-muted-foreground">
-                      Amenities, house rules, and local attractions
+                      Comodidades, regras da casa e atrações locais
                     </p>
                   </div>
                   <Button size="sm" variant="outline" asChild>
-                    <a href="/knowledge-base?tab=lists">View</a>
+                    <a href="/knowledge-base?tab=lists">Ver</a>
                   </Button>
                 </div>
                 
@@ -287,13 +296,13 @@ const Index: React.FC = () => {
                     <BookOpen className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium">Company Information</h3>
+                    <h3 className="font-medium">Informações da Empresa</h3>
                     <p className="text-sm text-muted-foreground">
-                      Check-in/out instructions, policies, and property info
+                      Instruções de check-in/out, políticas e informações da propriedade
                     </p>
                   </div>
                   <Button size="sm" variant="outline" asChild>
-                    <a href="/knowledge-base?tab=company">View</a>
+                    <a href="/knowledge-base?tab=company">Ver</a>
                   </Button>
                 </div>
                 
@@ -302,13 +311,13 @@ const Index: React.FC = () => {
                     <Bot className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium">AI Agent Configuration</h3>
+                    <h3 className="font-medium">Configuração de Agentes de IA</h3>
                     <p className="text-sm text-muted-foreground">
-                      Manage AI assistants and their knowledge sources
+                      Gerencie assistentes de IA e suas fontes de conhecimento
                     </p>
                   </div>
                   <Button size="sm" variant="outline" asChild>
-                    <a href="/agents">View</a>
+                    <a href="/agents">Ver</a>
                   </Button>
                 </div>
               </div>
