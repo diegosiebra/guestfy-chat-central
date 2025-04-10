@@ -1,6 +1,9 @@
 // Mock service for Stay.net API
 // In a real implementation, this would make actual API calls to Stay.net
 
+import { Property } from "@/types/propertyTypes";
+import { fetchPropertyById } from "./propertyService";
+
 export type Listing = {
   id: string;
   name: string;
@@ -49,6 +52,8 @@ export type Reservation = {
   updatedAt: string;
   notes?: string;
   promoCode?: string;
+  propertyId?: string; // ID da propriedade no sistema Stay.net
+  property?: Property; // Dados completos da propriedade
 };
 
 // Mock data generator
@@ -167,8 +172,9 @@ const generateMockReservations = (count: number): Reservation[] => {
       status: statuses[statusIndex],
       createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
       updatedAt: new Date().toISOString(),
-      notes: i % 3 === 0 ? 'Guest requested early check-in' : undefined,
-      promoCode: i % 5 === 0 ? 'SUMMER10' : undefined
+      notes: i % 3 === 0 ? 'Hóspede solicitou check-in antecipado' : undefined,
+      promoCode: i % 5 === 0 ? 'SUMMER10' : undefined,
+      propertyId: i % 2 === 0 ? 'DB09I' : undefined // ID da propriedade no Stay.net
     });
   }
 
@@ -225,8 +231,24 @@ export const getPreCheckoutReservations = (reservations: Reservation[]): Reserva
 export const fetchReservations = async (): Promise<Reservation[]> => {
   // Simulate API call with a delay
   return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(generateMockReservations(12));
+    setTimeout(async () => {
+      const reservations = generateMockReservations(12);
+      
+      // Para cada reserva que tem propertyId, vamos carregar os dados da propriedade
+      for (let i = 0; i < reservations.length; i++) {
+        if (reservations[i].propertyId) {
+          try {
+            const property = await fetchPropertyById(reservations[i].propertyId);
+            if (property) {
+              reservations[i].property = property;
+            }
+          } catch (error) {
+            console.error(`Erro ao buscar propriedade para reserva ${reservations[i].id}:`, error);
+          }
+        }
+      }
+      
+      resolve(reservations);
     }, 500);
   });
 };
@@ -245,4 +267,24 @@ export const fetchClients = async (): Promise<Client[]> => {
   });
   
   return Array.from(uniqueClients.values());
+};
+
+// Função para buscar uma reserva pelo ID com dados da propriedade
+export const fetchReservationWithProperty = async (id: string): Promise<Reservation | null> => {
+  try {
+    const reservation = await fetchReservationById(id);
+    if (reservation && reservation.propertyId) {
+      const property = await fetchPropertyById(reservation.propertyId);
+      if (property) {
+        return {
+          ...reservation,
+          property
+        };
+      }
+    }
+    return reservation;
+  } catch (error) {
+    console.error(`Erro ao buscar reserva ${id} com dados da propriedade:`, error);
+    return null;
+  }
 };

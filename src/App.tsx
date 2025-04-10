@@ -9,6 +9,9 @@ import AppLayout from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import ReservationsPage from "./pages/ReservationsPage";
+import ReservationDetailsPage from "./pages/ReservationDetailsPage";
+import PropertiesPage from "./pages/PropertiesPage";
+import PropertyDetailsPage from "./pages/PropertyDetailsPage";
 import ChatsPage from "./pages/ChatsPage";
 import AgentsPage from "./pages/AgentsPage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
@@ -60,6 +63,9 @@ const App = () => (
             }>
               <Route path="/" element={<Index />} />
               <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="/reservations/:id" element={<ReservationDetailsPage />} />
+              <Route path="/properties" element={<PropertiesPage />} />
+              <Route path="/properties/:id" element={<PropertyDetailsPage />} />
               <Route path="/chats" element={<ChatsPage />} />
               <Route path="/agents" element={<AgentsPage />} />
               <Route path="/knowledge-base" element={<KnowledgeBasePage />} />

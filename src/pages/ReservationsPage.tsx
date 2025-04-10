@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,14 +38,12 @@ const ReservationsPage: React.FC = () => {
   const filterReservations = () => {
     let filtered = [...reservations];
 
-    // Filtrar por status se não for "all"
     if (statusFilter !== 'all') {
       filtered = filtered.filter(
         (res) => res.status === statusFilter
       );
     }
 
-    // Filtrar por termo de busca
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -69,7 +67,6 @@ const ReservationsPage: React.FC = () => {
     return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
 
-  // Crachás de status
   const getStatusBadge = (status: ReservationStatus) => {
     const badgeClasses = {
       confirmed: "bg-green-100 text-green-800",
@@ -214,7 +211,9 @@ const ReservationsPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Button size="sm" variant="outline">Visualizar</Button>
+                        <Button size="sm" variant="outline" asChild>
+                          <Link to={`/reservations/${reservation.id}`}>Visualizar</Link>
+                        </Button>
                       </td>
                     </tr>
                   ))}
