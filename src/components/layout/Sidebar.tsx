@@ -21,6 +21,11 @@ import {
   Home,
   Settings,
   Building2,
+  Users,
+  ClipboardCheck,
+  BriefcaseBusiness,
+  ShieldCheck,
+  FileCheck,
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
@@ -62,6 +67,34 @@ const Sidebar: React.FC = () => {
     },
   ];
 
+  const managerTaskItems = [
+    {
+      title: "Equipe",
+      path: "/team",
+      icon: Users,
+    },
+    {
+      title: "Tarefas",
+      path: "/tasks",
+      icon: ClipboardCheck,
+    },
+    {
+      title: "Contratos",
+      path: "/contracts",
+      icon: FileCheck,
+    },
+    {
+      title: "Permissões",
+      path: "/permissions",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Relatórios",
+      path: "/reports",
+      icon: BriefcaseBusiness,
+    },
+  ];
+
   const isActive = (path: string): boolean => {
     return location.pathname.startsWith(path);
   };
@@ -74,9 +107,31 @@ const Sidebar: React.FC = () => {
         </div>
         
         <SidebarGroup>
+          <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    className={isActive(item.path) ? "bg-sidebar-accent text-white" : ""}
+                    asChild
+                  >
+                    <NavLink to={item.path}>
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Gestão</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {managerTaskItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     className={isActive(item.path) ? "bg-sidebar-accent text-white" : ""}
