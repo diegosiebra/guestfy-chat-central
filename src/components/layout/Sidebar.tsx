@@ -20,6 +20,7 @@ import {
   DollarSign,
   Home,
   Settings,
+  Building2,
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
@@ -33,6 +34,11 @@ const Sidebar: React.FC = () => {
       title: "Reservas",
       path: "/reservations",
       icon: CalendarDays,
+    },
+    {
+      title: "Propriedades",
+      path: "/properties",
+      icon: Building2,
     },
     {
       title: "Chat",
